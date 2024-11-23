@@ -1,89 +1,98 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 int is_operator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/';
 }
 
-int evaluate_expression(const char *expression, int *error)
-{
-    char *tokens=strdup(expression);
-    char *token;
-    int values[100];
-    int top_values=-1;
-    int operators[100];
-    int top_operators=-1;
+int op_precedence(char op) {
+    if (op == '*' || op == '/') return 2;
+    if (op == '+' || op == '-') return 1;
+    return 0;
+}
 
-    int apply_operator(int a, int b, char op){
-        switch(op){
-            case '+': return a+b;
-            case '-': return a-b;
-            case '*': return a*b;
-            case '/':
-                if(b==0)
-                {
-                    *error=1;
-                    return 0;
-                }
-                return a/b;
-            default: *error=1;
-        }
-        return 0;
+int apply_operatation(int a, int b, char op, int *error) {
+    switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/':
+            if (b == 0) {
+                *error = 1; // Division by zero
+                return 0;
+            }
+            return a / b;
+        default:
+            *error = 1; // Invalid operator
+            return 0;
     }
-    
+}
+
+int evaluate_expression(const char *expression, int *error) {
+    int  numbers[100], top_numbers = -1;
+    char operators[100];
+    int top_operators = -1;
+
     void process_operator() {
-        if (top_operators < 0 || top_values < 1) {
-            *error = 1; 
+        if (top_operators < 0 || top_numbers < 1) {
+            *error = 1; // Invalid expression
             return;
         }
-        int b = values[top_values--];
-        int a = values[top_values--];
+        int b = numbers[top_numbers--];
+        int a = numbers[top_numbers--];
         char op = operators[top_operators--];
-        values[++top_values] = apply_operator(a, b, op);
+        numbers[++top_numbers] = apply_operatation(a, b, op, error);
     }
-    token=strtok(tokens," ");
-    while(token!=NULL)
-    {
-        if(isdigit(token[0]))
-        {
-            values[++top_values]=atoi(token);
+
+    int i = 0, n = strlen(expression);
+    while (i < n && !*error) {
+        if (isspace(expression[i])) {
+            i++; // Skip spaces
+            continue;
         }
-        else if(is_operator(token[0]&& token[1]=='\n'))
-        {
-            while(top_operators>=0 &&  (token[0] == '+' || token[0] == '-') ||
-                    (token[0] == '*' || token[0] == '/')
-                )
-                {
-                    process_operator();
-                    if(*error) break;
-                }
-                operators[++top_operators]=token[0];
+
+        if (isdigit(expression[i])) {
+            int num = 0;
+            while (i < n && isdigit(expression[i])) {
+                num = num * 10 + (expression[i] - '0');
+                i++;
+            }
+            numbers[++top_numbers] = num;
+        } else if (is_operator(expression[i])) {
+            while (top_operators >= 0 &&
+                   op_precedence(operators[top_operators]) >= op_precedence(expression[i])) {
+                process_operator();
+            }
+            operators[++top_operators] = expression[i];
+            i++;
+        } else {
+            *error = 1; 
         }
-        else{
-            *error=1;
-            break;
-        }
-        token=strtok(NULL," ");
     }
+
     while (top_operators >= 0 && !*error) {
         process_operator();
     }
-    free(tokens);
-    if (top_values == 0 && !*error) {
-        return values[top_values];
+
+    if (top_numbers == 0 && !*error) {
+        return numbers[top_numbers];
     }
-    *error = 1;
+
+    *error = 1; 
     return 0;
 }
-int main()
-{
+
+int main() {
     char input[100];
-    printf("enter the expression for calculating: ");
-    fgets(input,sizeof(input),stdin);
+    printf("Enter the expression for calculation: ");
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = 0; 
+
     int error = 0;
     int result = evaluate_expression(input, &error);
+
     if (error) {
         printf("Error: Invalid expression.\n");
     } else {

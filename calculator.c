@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <string.h>
+#include <string.h> 
 
 int is_operator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/';
@@ -20,36 +20,36 @@ int apply_operatation(int a, int b, char op, int *error) {
         case '*': return a * b;
         case '/':
             if (b == 0) {
-                *error = 1; // Division by zero
+                *error = 1; 
                 return 0;
             }
             return a / b;
         default:
-            *error = 1; // Invalid operator
+            *error = 1; 
             return 0;
     }
 }
+void process_operator(int *numbers, int *top_numbers, char *operators, int *top_operators, int *error) {
+    if (*top_operators < 0 || *top_numbers < 1) {
+        *error = 1; 
+        return;
+    }
+    int b = numbers[(*top_numbers)--];
+    int a = numbers[(*top_numbers)--];
+    char op = operators[(*top_operators)--];
+    numbers[++(*top_numbers)] = apply_operatation(a, b, op, error);
+}
+
 
 int evaluate_expression(const char *expression, int *error) {
     int  numbers[100], top_numbers = -1;
     char operators[100];
     int top_operators = -1;
-
-    void process_operator() {
-        if (top_operators < 0 || top_numbers < 1) {
-            *error = 1; // Invalid expression
-            return;
-        }
-        int b = numbers[top_numbers--];
-        int a = numbers[top_numbers--];
-        char op = operators[top_operators--];
-        numbers[++top_numbers] = apply_operatation(a, b, op, error);
-    }
-
+    
     int i = 0, n = strlen(expression);
     while (i < n && !*error) {
         if (isspace(expression[i])) {
-            i++; // Skip spaces
+            i++; 
             continue;
         }
 
@@ -63,7 +63,7 @@ int evaluate_expression(const char *expression, int *error) {
         } else if (is_operator(expression[i])) {
             while (top_operators >= 0 &&
                    op_precedence(operators[top_operators]) >= op_precedence(expression[i])) {
-                process_operator();
+                process_operator(numbers, &top_numbers, operators, &top_operators, error);
             }
             operators[++top_operators] = expression[i];
             i++;
@@ -73,7 +73,7 @@ int evaluate_expression(const char *expression, int *error) {
     }
 
     while (top_operators >= 0 && !*error) {
-        process_operator();
+        process_operator(numbers, &top_numbers, operators, &top_operators, error);
     }
 
     if (top_numbers == 0 && !*error) {

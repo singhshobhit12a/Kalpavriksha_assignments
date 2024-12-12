@@ -29,7 +29,7 @@ int apply_operatation(int a, int b, char op, int *error) {
             return 0;
     }
 }
-void process_operator(int *numbers, int *top_numbers, char *operators, int *top_operators, int *error) {
+void evaluate_top_operator(int *numbers, int *top_numbers, char *operators, int *top_operators, int *error) {
     if (*top_operators < 0 || *top_numbers < 1) {
         *error = 1; 
         return;
@@ -62,8 +62,8 @@ int evaluate_expression(const char *expression, int *error) {
             numbers[++top_numbers] = num;
         } else if (is_operator(expression[i])) {
             while (top_operators >= 0 &&
-                   check_precedence(operators[top_operators]) >= check_precedence(expression[i])) {
-                process_operator(numbers, &top_numbers, operators, &top_operators, error);
+                    check_precedence(operators[top_operators]) >= check_precedence(expression[i])) {
+                    evaluate_top_operator(numbers, &top_numbers, operators, &top_operators, error);
             }
             operators[++top_operators] = expression[i];
             i++;
@@ -73,7 +73,7 @@ int evaluate_expression(const char *expression, int *error) {
     }
 
     while (top_operators >= 0 && !*error) {
-        process_operator(numbers, &top_numbers, operators, &top_operators, error);
+        evaluate_top_operator(numbers, &top_numbers, operators, &top_operators, error);
     }
 
     if (top_numbers == 0 && !*error) {

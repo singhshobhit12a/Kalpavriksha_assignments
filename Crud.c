@@ -7,42 +7,43 @@ typedef struct{
     int age;
     char gender;
 } User;
+
 void create()
 {
     FILE *file = fopen("user.txt","a");
     if(file==NULL)
     {
-        printf("WE ARE CURRENTLY NOT ABLE TO CREATE THE FILE\n");
+        printf("We are currently not able to create the file.\n");
         return;
     }
     User user;
-    printf("ENTER THE DETAILS OF THE USER!\n");
-    printf("ENTER THE ID OF THE USER.\n");
+    printf("Enter the details of the user!\n");
+    printf("id of the user.\n");
     scanf("%d",&user.id);
     getchar();
-    printf("ENTER THE NAME OF THE USER!");
+    printf("Name of the user?");
     fgets(user.name,sizeof(user.name),stdin);
     user.name[strcspn(user.name, "\n")] = 0; 
-    printf("ENTER AGE: ");
+    printf("Enter the age ");
     scanf("%d", &user.age);
     getchar();
-    printf("ENTER GENDER OF USER : ");
+    printf("Enter the gender: ");
     scanf(" %c", &user.gender);
     getchar();
     fprintf(file, "%d %s %d %c\n", user.id, user.name, user.age,user.gender);
     fclose(file);
-    printf("USER HAS BEEN  SUCCESSFULLY ADDED TO THE FILE.\n");
+    printf("user has been succesfully added to the file\n");
 }
 void read()
 {
     FILE *file=fopen("user.txt","r");
     if(file==NULL)
     {
-        printf("WE ARE CURRENTLY UNABLE TO READ THE FILE DUE TO SOME ERROR\n");
+        printf("We are currently unable to read the file");
         return;
     }
     User user;
-    printf("DETAILS OF THE USER ARE AS FOLLOWS!\n");
+    printf("Details of the user are as follows.\n");
     while(fscanf(file,"%d %s %d %c",&user.id,user.name,&user.age,&user.gender)!=EOF)
     {
         printf("ID: %d, Name: %s, Age: %d , Gender: %c\n", user.id, user.name, user.age,user.gender);
@@ -55,12 +56,12 @@ void read()
         FILE *temp =fopen("temp.txt","w");
         if(file==NULL || temp==NULL)
         {
-            printf("DUE TO ERROR THE FILE CAN NOT BE UPDATED!");
+            printf("Due to some error the file can not be updated rtn.");
             return;
         }
         int target, update=0;
         User user;
-        printf("ENTER THE USER ID TO BE UPDATE");
+        printf("Enter the user id to be updated");
         scanf("%d",&target);
         getchar();
         
@@ -68,13 +69,13 @@ void read()
         {
             if(user.id==target)
             {
-                printf("ENTER THE UPDATED NAME");
+                printf("Enter the updated name");
                 fgets(user.name,sizeof(user.name),stdin);
                 user.name[strcspn(user.name, "\n")] = 0;
-                printf("ENTER THE UPDATED AGE");
+                printf("Enter the updated age");
                 scanf("%d",&user.age);
                 getchar();
-                printf("ENTER THE UPDATED GENDER");
+                printf("Enter the updated gender");
                 scanf(" %c",&user.gender);
                 getchar();
                 update=1;
@@ -86,9 +87,9 @@ void read()
         remove("user.txt");
         rename("temp.txt","user.txt");
         if (update)
-        printf("FAILE HAS BEEN SUCCESSFULL UPDATED.\n");
+        printf("File has been succesfully updated");
         else
-        printf("NO USER WAS FOUND WITH THE USER Id: %d.\n",target);
+        printf("No user found\n",target);
 }
 void delete()
 {
@@ -96,12 +97,12 @@ void delete()
     FILE *temp=fopen("temp.txt","w");
     if(file==NULL || temp==NULL)
     {
-        printf("THE DELETE OPERATION CAN NOT BE PERFORMED DUE TO ERROR");
+        printf("User can not be deleted rtn");
         return;
     }
     int target,deleted=0;
     User user;
-    printf("ENTER THE ID TO DELETE: \n");
+    printf("Enter the id to be deleted \n");
     scanf("%d", &target);
     while(fscanf(file,"%d %s %d %c",&user.id,user.name,&user.name,&user.gender)!=EOF)
     {
@@ -118,10 +119,10 @@ void delete()
     rename("temp.txt", "user.txt");
     if(deleted)
     {
-        printf("USER HAS BEEN SUCCESSFULL FROM FILE\n");
+        printf("User succesfully deleted!\n");
     }
     else{
-        printf("NO USER WAS FOUND WITH THE USER Id: %d.\n",target);
+        printf("no user found with user id:  %d.\n",target);
     }
 }
 int main() {
@@ -151,10 +152,10 @@ int main() {
                 delete();
                 break;
             case 5:
-                printf("THANKS FOR USING CRUD MANAGER \n");
+                printf("Thanks for using crud manager \n");
                 exit(0);
             default:
-                printf("INVALID INPUT, TRY AGAIN\n");
+                printf("Invalid input try again\n");
         }
     }
     

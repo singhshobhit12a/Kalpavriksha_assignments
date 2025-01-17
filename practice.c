@@ -1,9 +1,5 @@
 #include<stdio.h>
 #include<stdlib.h>
-int is_digit(char *input)
-{
-    return *input>='0' && *input<='9';
-}
 
 typedef struct node{
     int data;
@@ -12,40 +8,31 @@ typedef struct node{
 
 int main()
  {  
-    char* input=(char*)malloc(100*sizeof(char));
-    scanf("%[^\n]",input);
-
-    node* head=(node*)malloc(sizeof(node));
+    int input=0;
+    node* head=(node*)calloc(1,sizeof(node));
     node* last=head;
 
-    int first=1;
+    scanf("%d",&input);
+    head->data=input;
+    head->next=NULL;
 
-    while(*input!='\0')
-    {   int temp=0;
-        while(!is_digit(input) && *input!='\0')
-        {
-            input++;
-        }
-        while(*input!=' ' && is_digit(input))
-        {
-            temp=temp*10+*input-'0';
-            input++;
-        }
-        if(first==1){
-            head->data=temp;
-            head->next=NULL;
-            first=0;
-        }
-       else{
-            node* cur=(node*)malloc(sizeof(node));
-            cur->data=temp;
-            cur->next=NULL;
-            last->next=cur;
-            last=cur;
-       }
-       input++;
+    while (input!=-1)
+    {   
+        scanf("%d",&input);
+        if(input==-1) break;
+        node* cur=(node*)malloc(sizeof(node));
+        cur->data=input;
+        cur->next=NULL;
+        last->next=cur;
+        last=cur;
     }
-
+    node* temp=head;
+    while(temp!=NULL)
+    {  
+        printf("%d ",temp->data);
+        temp=temp->next;
+    }
+    printf("\n");
     node* slow=head;
     node* fast=head;
 

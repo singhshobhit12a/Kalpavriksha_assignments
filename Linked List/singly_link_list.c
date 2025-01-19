@@ -174,7 +174,7 @@ int main()
     scanf("%d",&num_op);
     int count=0;
     node* head=NULL;
-    while (num_op>=0)
+    while (num_op>0)
    {
     int choose;
     scanf("%d",&choose);
